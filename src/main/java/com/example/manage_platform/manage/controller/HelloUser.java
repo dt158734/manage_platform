@@ -1,10 +1,18 @@
 package com.example.manage_platform.manage.controller;
 
+//import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.manage_platform.manage.annotation.LoginInfo;
 import com.example.manage_platform.manage.entity.UserEntity;
 import com.example.manage_platform.manage.service.HelloUserService;
+import com.example.manage_platform.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
@@ -25,11 +33,35 @@ public class HelloUser {
     @Autowired
     private HelloUserService helloUserService;
 
-    @RequestMapping("/login2")
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @RequestMapping(value = "/login2",method = RequestMethod.POST)
     @ResponseBody
     public UserEntity getUser2(){
-        UserEntity userEntity = helloUserService.getUser2();
-        return userEntity;
+        if (redisUtil.get("user") != null) {
+            Object user = redisUtil.get("user");
+            JSONObject jsonObject = JSON.parseObject((String) user);
+            UserEntity userEntity = jsonObject.toJavaObject(UserEntity.class);
+            return userEntity;
+        } else {
+            UserEntity userEntity = helloUserService.getUser2();
+            String string = JSON.toJSONString(userEntity);
+            redisUtil.set("user",string,3*1000*60);
+            return userEntity;
+        }
+//        if (redisUtil.get("user") != null) {
+//            UserEntity userEntity = (UserEntity)JSON.parse(redisUtil.get("user").toString());
+//            return userEntity;
+//        } else {
+//            UserEntity userEntity = helloUserService.getUser2();
+//            String string = JSON.toJSONString(userEntity);
+//            redisUtil.set("user",string,3*1000*60);
+//            return userEntity;
+//        }
     }
 
     @LoginInfo(value = "1")
