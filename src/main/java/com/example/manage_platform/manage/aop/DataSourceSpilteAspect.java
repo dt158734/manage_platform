@@ -5,11 +5,10 @@ import com.example.manage_platform.constant.DataSourceHolder;
 import com.example.manage_platform.manage.enums.WriteMethodsEnum;
 import com.example.manage_platform.utils.RedisUtil;
 import com.example.manage_platform.utils.SqlUtils;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ import java.util.List;
 @Order(1)
 @Component
 @Aspect
-@Log4j
+@Log4j2
 public class DataSourceSpilteAspect {
 
     @Autowired
@@ -34,15 +33,15 @@ public class DataSourceSpilteAspect {
     private RedisUtil redisUtil;
 
 //    @Pointcut("execution(* com..dao..*(..))")
-    @Pointcut("execution(* com.example.manage_platform.manage.dao.*(..))")
+    @Pointcut("execution(* com.example.manage_platform.manage.dao..*(..))")
     public void mobileDataSourcePointcut(){
     }
 
-    @Around("mobileDataSourcePointcut()")
+//    @Around("mobileDataSourcePointcut()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         Object proceed = null;
         try {
-            System.out.println("++++++++++切源开始+++++++++++");
+//            System.out.println("++++++++++切源开始+++++++++++");
 
             //1.从redis中获取主数据库，若获取不到直接退出，否则判断当前数据源是会否为主，若不为主，则切换到主数据源
             //2.调用目标方法
@@ -59,14 +58,14 @@ public class DataSourceSpilteAspect {
             //3.获取SQL
             System.out.println("######################"+sql+"######################");
             proceed = pjp.proceed();
-            System.out.println("数据源："+DataSourceHolder.getCustomeType());
+//            System.out.println("数据源："+DataSourceHolder.getCustomeType());
             DataSourceHolder.remove();
         }catch (Exception e){
             System.out.println("数据源："+DataSourceHolder.getCustomeType());
             DataSourceHolder.remove();
             log.error("读写分离异常", e);
         }
-        System.out.println("++++++++++切源结束+++++++++++");
+//        System.out.println("++++++++++切源结束+++++++++++");
         return proceed;
     }
 

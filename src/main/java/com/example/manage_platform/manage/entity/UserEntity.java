@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
@@ -18,7 +19,9 @@ public class UserEntity {
     private int validFlag;
     private Boolean validFlagStatus;
     private Date createTime;
+    private String createTimeString;
     private Date updateTime;
+    private String updateTimeString;
 
     public Boolean getValidFlagStatus(){
         if (validFlag == 1) {
@@ -26,5 +29,23 @@ public class UserEntity {
         } else {
             return false;
         }
+    }
+
+    public String getCreateTimeString(){
+        String stringDate = null;
+        if (createTime != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            stringDate = simpleDateFormat.format(createTime);
+        }
+        return stringDate;
+    }
+
+    public String getUpdateTimeString(){
+        String stringDate = null;
+        if (createTime != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            stringDate = simpleDateFormat.format(updateTime);
+        }
+        return stringDate;
     }
 }
