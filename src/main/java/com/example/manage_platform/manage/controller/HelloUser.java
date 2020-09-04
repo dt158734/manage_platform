@@ -8,6 +8,7 @@ import com.example.manage_platform.manage.annotation.LoginInfo;
 import com.example.manage_platform.manage.entity.UserEntity;
 import com.example.manage_platform.manage.service.HelloUserService;
 import com.example.manage_platform.utils.RedisUtil;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 @RestController
 @RequestMapping("/user")
@@ -72,16 +74,6 @@ public class HelloUser {
     @ResponseBody
     public List<UserEntity> getUser3(){
         List<UserEntity> userEntity = helloUserService.getUser3();
-        //多线程处理
-//        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
-//                .setNameFormat("demo-pool-%d").build();
-//        ExecutorService executor = new ThreadPoolExecutor(6, 2*4+1,
-//                200, TimeUnit.MILLISECONDS,
-//                new LinkedBlockingQueue<Runnable>(10), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
-//        CompletableFuture<Integer> f1 = CompletableFuture.supplyAsync(() -> shopDaily2Dao.queryProductEffectTableByDailyByCNum(selectProductEffectEntity),executor);
-//        //等待三个数据源都返回后，再组装数据。这里会有一个线程阻塞
-//        CompletableFuture.allOf(f1).join();
-//        Integer c = f1.get();
         return userEntity;
     }
 
@@ -107,6 +99,49 @@ public class HelloUser {
             map.put("data",new HashMap<>());
         }
         return map;
+    }
+
+    @RequestMapping(value = "/threadRun", method=RequestMethod.POST)
+    @ResponseBody
+    public void threadRun() throws ExecutionException, InterruptedException {
+        //多线程处理
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder()
+                .setNameFormat("demo-pool-%d").build();
+        ExecutorService executor = new ThreadPoolExecutor(6, 2*4+1,
+                200, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>(10), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+        CompletableFuture<List<UserEntity>> f1 = CompletableFuture.supplyAsync(() ->  helloUserService.getUser3(),executor);
+        CompletableFuture<List<UserEntity>> f2 = CompletableFuture.supplyAsync(() ->  helloUserService.getUser3(),executor);
+        CompletableFuture<List<UserEntity>> f3 = CompletableFuture.supplyAsync(() ->  helloUserService.getUser3(),executor);
+        CompletableFuture<List<UserEntity>> f4 = CompletableFuture.supplyAsync(() ->  helloUserService.getUser3(),executor);
+        CompletableFuture<List<UserEntity>> f5 = CompletableFuture.supplyAsync(() ->  helloUserService.getUser3(),executor);
+        CompletableFuture.allOf(f1,f2,f3,f4,f5).join();
+//        while (!f1.isDone() && !f2.isDone() &&  !f3.isDone() &&
+//                !f4.isDone() && !f5.isDone()) {
+//            System.out.println(1);
+//        }
+        List<UserEntity> userEntities1 = null;
+        List<UserEntity> userEntities2 = null;
+        List<UserEntity> userEntities3 = null;
+        List<UserEntity> userEntities4 = null;
+        List<UserEntity> userEntities5 = null;
+        try {
+            userEntities1 = f1.get();
+            userEntities2 = f2.get();
+            userEntities3 = f3.get();
+            userEntities4 = f4.get();
+            userEntities5 = f5.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        System.out.println(userEntities1.toString().length());
+        System.out.println(userEntities2.toString().length());
+        System.out.println(userEntities3.toString().length());
+        System.out.println(userEntities4.toString().length());
+        System.out.println(userEntities5.toString().length());
+
     }
 
 }

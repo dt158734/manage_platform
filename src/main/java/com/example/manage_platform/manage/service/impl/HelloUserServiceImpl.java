@@ -23,7 +23,6 @@ public class HelloUserServiceImpl implements HelloUserService {
     public UserEntity getUser2() {
         UserEntity userEntity = UserEntity.builder().id(2).username("董涛").password("21111").validFlag(1)
                 .createTime(new Date()).updateTime(new Date()).build();
-        System.out.println(userEntity);
         return userEntity;
     }
 
@@ -33,6 +32,11 @@ public class HelloUserServiceImpl implements HelloUserService {
     @Override
     public List<UserEntity> getUser3() {
         List<UserEntity> userEntities = helloUserDao.getUser3();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return userEntities;
     }
 
