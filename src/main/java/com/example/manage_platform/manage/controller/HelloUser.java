@@ -15,10 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 @RestController
@@ -136,8 +133,11 @@ public class HelloUser {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        List<UserEntity> userEntities6 = null;
+        if (userEntities6 == null) throw new AssertionError();
+
         System.out.println(userEntities1.toString().length());
-        System.out.println(userEntities2.toString().length());
+        System.out.println(Objects.requireNonNull(userEntities2).toString().length());
         System.out.println(userEntities3.toString().length());
         System.out.println(userEntities4.toString().length());
         System.out.println(userEntities5.toString().length());
