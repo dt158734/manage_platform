@@ -2,6 +2,8 @@ package com.example.manage_platform.manage.controller;
 
 //import com.alibaba.fastjson.JSON;
 
+import cn.hutool.cache.CacheUtil;
+import cn.hutool.cache.impl.FIFOCache;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.manage_platform.manage.annotation.LoginInfo;
@@ -10,11 +12,14 @@ import com.example.manage_platform.manage.service.HelloUserService;
 import com.example.manage_platform.utils.RedisUtil;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.log4j.Log4j2;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -142,6 +147,67 @@ public class HelloUser {
         System.out.println(userEntities4.toString().length());
         System.out.println(userEntities5.toString().length());
 
+    }
+
+    private FIFOCache<String , XSSFWorkbook> objects;
+
+    /**
+     * 不适用!如果使用的模板是通过是通过读取某个地址下的文件!后期这个地址的文件内容被修改!无法实时生效!
+     * 需要在增加触发事件来做到实施更新!
+     * @throws IOException
+     */
+    @RequestMapping(value = "/cacheFile", method=RequestMethod.POST)
+    @ResponseBody
+    public void cacheFile() throws IOException {
+        long l = System.currentTimeMillis();
+        if (objects == null ) {
+            objects = CacheUtil.newFIFOCache(10, 0);
+        }
+        if (objects.get("xssfSheets") != null || objects.get("xssfSheets1") != null ||
+                objects.get("xssfSheets2") != null || objects.get("xssfSheets3") != null ||
+                objects.get("xssfSheets4") != null || objects.get("xssfSheets5") != null) {
+            XSSFWorkbook xssfSheets = objects.get("xssfSheets");
+            XSSFWorkbook xssfSheets1 = objects.get("xssfSheets1");
+            XSSFWorkbook xssfSheets2 = objects.get("xssfSheets2");
+            XSSFWorkbook xssfSheets3 = objects.get("xssfSheets3");
+            XSSFWorkbook xssfSheets4 = objects.get("xssfSheets4");
+            XSSFWorkbook xssfSheets5 = objects.get("xssfSheets5");
+        } else {
+            FileInputStream fileInputStream = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0001r01.xlsx");
+            FileInputStream fileInputStream1 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0002r01.xlsx");
+            FileInputStream fileInputStream2 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0002r02.xlsx");
+            FileInputStream fileInputStream3 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0002r03.xlsx");
+            FileInputStream fileInputStream4 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0003r01.xlsx");
+            FileInputStream fileInputStream5 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0003r02.xlsx");
+            XSSFWorkbook xssfSheets = new XSSFWorkbook(fileInputStream);
+            XSSFWorkbook xssfSheets1 = new XSSFWorkbook(fileInputStream1);
+            XSSFWorkbook xssfSheets2 = new XSSFWorkbook(fileInputStream2);
+            XSSFWorkbook xssfSheets3 = new XSSFWorkbook(fileInputStream3);
+            XSSFWorkbook xssfSheets4 = new XSSFWorkbook(fileInputStream4);
+            XSSFWorkbook xssfSheets5 = new XSSFWorkbook(fileInputStream5);
+            objects.put("xssfSheets",xssfSheets);
+            objects.put("xssfSheets1",xssfSheets1);
+            objects.put("xssfSheets2",xssfSheets2);
+            objects.put("xssfSheets3",xssfSheets3);
+            objects.put("xssfSheets4",xssfSheets4);
+            objects.put("xssfSheets5",xssfSheets5);
+        }
+        long l1 = System.currentTimeMillis();
+        System.out.println("缓存: " + (l1-l));
+        FileInputStream fileInputStream = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0001r01.xlsx");
+        FileInputStream fileInputStream1 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0002r01.xlsx");
+        FileInputStream fileInputStream2 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0002r02.xlsx");
+        FileInputStream fileInputStream3 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0002r03.xlsx");
+        FileInputStream fileInputStream4 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0003r01.xlsx");
+        FileInputStream fileInputStream5 = new FileInputStream("D:\\LAMP\\lease\\template\\excel\\acc0003r02.xlsx");
+        XSSFWorkbook xssfSheets = new XSSFWorkbook(fileInputStream);
+        XSSFWorkbook xssfSheets1 = new XSSFWorkbook(fileInputStream1);
+        XSSFWorkbook xssfSheets2 = new XSSFWorkbook(fileInputStream2);
+        XSSFWorkbook xssfSheets3 = new XSSFWorkbook(fileInputStream3);
+        XSSFWorkbook xssfSheets4 = new XSSFWorkbook(fileInputStream4);
+        XSSFWorkbook xssfSheets5 = new XSSFWorkbook(fileInputStream5);
+        long l2 = System.currentTimeMillis();
+        System.out.println("非缓存 :" + (l2-l1));
     }
 
 }

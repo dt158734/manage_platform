@@ -210,7 +210,14 @@
             <artifactId>guava</artifactId>
             <version>29.0-jre</version>
         </dependency>
-
+        <!-- 一款功能虽小但是很全的代码工具类 https://juejin.im/post/6869914176941359118#heading-3-->
+        <!-- https://github.com/macrozheng/mall-learning/tree/master/mall-tiny-hutool -->
+        <!-- 参考文档:https://www.hutool.cn/ -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.4.0</version>
+        </dependency>
     </dependencies>
 
     <build>
