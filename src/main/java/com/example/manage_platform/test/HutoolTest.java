@@ -31,5 +31,7 @@ public class HutoolTest {
         writer.write(rows);
 // 关闭writer，释放内存
         writer.close();
+
+        System.out.println("ceshi1");
     }
 }
