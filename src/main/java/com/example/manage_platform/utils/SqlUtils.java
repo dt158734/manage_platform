@@ -16,11 +16,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.*;
-
-/**
- * Created by haiSheng on 2020/4/20.
- */
-
 public class SqlUtils {
 
     /**

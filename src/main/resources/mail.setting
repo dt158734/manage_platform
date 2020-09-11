@@ -1,0 +1,6 @@
+host = mail.cncsys.com.cn
+port = 25
+from = sh-dongt@cncsys.com.cn
+user = sh-dongt@cncsys.com.cn
+pass = test123!"#
+startttlsEnable = ture

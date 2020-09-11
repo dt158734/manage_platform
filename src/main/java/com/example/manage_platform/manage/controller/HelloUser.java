@@ -4,6 +4,13 @@ package com.example.manage_platform.manage.controller;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.FIFOCache;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.extra.mail.Mail;
+import cn.hutool.extra.mail.MailAccount;
+import cn.hutool.extra.mail.MailUtil;
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.manage_platform.manage.annotation.LoginInfo;
@@ -18,6 +25,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -191,6 +199,11 @@ public class HelloUser {
             objects.put("xssfSheets3",xssfSheets3);
             objects.put("xssfSheets4",xssfSheets4);
             objects.put("xssfSheets5",xssfSheets5);
+            objects.put("xssfSheets6",xssfSheets5);
+            objects.put("xssfSheets7",xssfSheets5);
+            objects.put("xssfSheets8",xssfSheets5);
+            objects.put("xssfSheets9",xssfSheets5);
+            objects.put("xssfSheets10",xssfSheets5);
         }
         long l1 = System.currentTimeMillis();
         System.out.println("缓存: " + (l1-l));
@@ -209,5 +222,17 @@ public class HelloUser {
         long l2 = System.currentTimeMillis();
         System.out.println("非缓存 :" + (l2-l1));
     }
+
+    @RequestMapping(value = "/sendMail", method=RequestMethod.POST)
+    @ResponseBody
+    public void sendMail(){
+        File file = new File("D:\\LAMP\\lease\\template\\excel\\acc0001r01.xlsx");
+        String send = MailUtil.sendText("18821614627@163.com", "邮件", "不限", file);
+        String[] strings = new String[0];
+        CollUtil.newArrayList(strings);
+        ExcelUtil.getWriter("");
+        System.out.println(send);
+    }
+
 
 }
